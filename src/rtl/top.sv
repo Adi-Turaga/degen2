@@ -1,8 +1,12 @@
 `timescale 1ns / 1ps
 
 module top #(
-    parameter int BAUD_RATE = 115200,
-    parameter int CLK_FREQ = 50_000_000
+    parameter N = 3,
+    parameter NUM_ELEMENTS = 64,
+    parameter US_PULSES = 700,
+    parameter PA_PULSES = 30,
+    parameter BAUD_RATE = 115200,
+    parameter CLK_FREQ = 50_000_000
 )(
     input clk, rst_n, trig_in, din,
     input en_all,
@@ -28,7 +32,9 @@ module top #(
         .bitmask_AB(bitmask_AB), .bitmask_CD(bitmask_CD), .bitmask_EF(bitmask_EF)
     );
     
-    degen_core2 dg2(
+    degen_core2 #(
+        .N(N), .NUM_ELEMENTS(NUM_ELEMENTS), .US_PULSES(US_PULSES), .PA_PULSES(PA_PULSES)
+    ) dg2 (
         .clk(clk), .rst_n(rst_n), .trig_in(trig_in), .en_all(en_all),
         .tA_in(tA), .tB_in(tB), .tC_in(tC), .tD_in(tD), .tE_in(tE), .tF_in(tF),
         .pulse_w1(pulse_w1), .pulse_w2(pulse_w2), .pulse_w3(pulse_w3),

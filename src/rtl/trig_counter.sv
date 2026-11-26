@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 module trig_counter #(
-    parameter NUM_ANGLES = 32,
-    localparam COUNTER_WIDTH = $clog2(NUM_ANGLES)
+    parameter COUNTER_WIDTH = 32
+    //localparam COUNTER_WIDTH = $clog2(MAX_FRAMES)
 )(
     input clk, rst_n, trig_in, en_all,
     input [COUNTER_WIDTH-1:0] US_pulses, PA_pulses,
@@ -31,6 +31,7 @@ module trig_counter #(
     
     always_ff @(posedge clk) begin
         if(!rst_n) begin
+            current_state <= US;
             master_counter <= '0;
             en_AB <= 1'b0;
             en_CD <= 1'b0;

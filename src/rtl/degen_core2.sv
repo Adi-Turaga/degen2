@@ -2,27 +2,28 @@
 
 module degen_core2 #(
     parameter N = 3, // number of pulse lanes
-    parameter NUM_ANGLES = 32,
     parameter NUM_ELEMENTS = 128,
     
-    parameter US_pulses = 10,
-    parameter PA_pulses = 12,
-    
-    localparam COUNTER_WIDTH = $clog2(NUM_ANGLES),
-    localparam FRAMES_PER_ACQ = (NUM_ELEMENTS/64)   // us4R can only fire max 64 elements at once
+    parameter US_PULSES = 10,
+    parameter PA_PULSES = 12
 )(
     input clk, rst_n, trig_in, en_all,
     input [19:0] tA_in, tB_in, tC_in, tD_in, tE_in, tF_in,
     input [2:0] bitmask_AB_in, bitmask_CD_in, bitmask_EF_in,
     //input [COUNTER_WIDTH-1:0] US_pulses, PA_pulses,
     output logic pulse_w1, pulse_w2, pulse_w3
-    );
+);
+
+    localparam COUNTER_WIDTH = $clog2((US_PULSES > PA_PULSES) ? US_PULSES : PA_PULSES);
+    localparam FRAMES_PER_ACQ = (NUM_ELEMENTS/64);   // us4R can only fire max 64 elements at once
     
     logic en_AB, en_CD, en_EF, is_posedge;
     
-    trig_counter tc1(
+    trig_counter #(
+        .COUNTER_WIDTH(COUNTER_WIDTH)
+    ) tc1 (
         .clk(clk), .rst_n(rst_n), .trig_in(trig_in), .en_all(en_all), .is_posedge(is_posedge),
-        .US_pulses(US_pulses), .PA_pulses(PA_pulses),
+        .US_pulses(US_PULSES), .PA_pulses(PA_PULSES),
         .en_AB(en_AB), .en_CD(en_CD), .en_EF(en_EF)
     );
     
